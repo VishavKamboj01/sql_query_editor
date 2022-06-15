@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   BaseContainer,
   Button,
@@ -6,8 +6,13 @@ import {
   TopBarContainer,
 } from "./homeStyles";
 import Editor from "../Editor/Editor";
-import Output from "../Editor/Output";
 export default function Home() {
+  const [runClicked, setRunClicked] = useState(false);
+
+  const handleOutputComplete = () => {
+    setRunClicked(false);
+  };
+
   return (
     <BaseContainer>
       <TopBarContainer>
@@ -15,12 +20,16 @@ export default function Home() {
         <ButtonsContainer>
           <Button>IMPORT</Button>
           <Button>SAVE</Button>
-          <Button>RUN</Button>
+          <Button
+            onClick={() => {
+              setRunClicked(true);
+            }}
+          >
+            RUN
+          </Button>
         </ButtonsContainer>
       </TopBarContainer>
-      <Editor>
-        <Output />
-      </Editor>
+      <Editor runClicked={runClicked} onComplete={handleOutputComplete} />
     </BaseContainer>
   );
 }

@@ -1,4 +1,9 @@
-export const table1 = {
+export function executeQuery(query) {
+  if (query === "select * from customer") return table1;
+  else return { headers: [], data: [{}] };
+}
+
+const table1 = {
   headers: ["ID", "FirstName", "LastName", "Username"],
   data: [
     {

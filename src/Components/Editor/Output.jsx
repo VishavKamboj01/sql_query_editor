@@ -1,28 +1,47 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ResultContainer } from "./outputStyles";
 import { Table } from "react-bootstrap";
+import { executeQuery } from "../../Tables/tables";
 
-export default function Output({ headers, data }) {
+export default function Output({ nothing, query, onComplete }) {
+  const table = executeQuery(query);
+
   return (
     <ResultContainer>
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            {headers.map((header) => (
-              <th>{header}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item) => (
+      {!nothing && query !== "" ? (
+        <Table striped bordered hover>
+          <thead>
             <tr>
-              {Object.keys(item).map((key) => (
-                <td>{item[key]}</td>
+              {table.headers.map((header) => (
+                <th>{header}</th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {table.data.map((item) => (
+              <tr>
+                {Object.keys(item).map((key) => (
+                  <td>{item[key]}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      ) : (
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <h4 style={{ opacity: 0.4, fontStyle: "italic" }}>
+            Output will show here...
+          </h4>
+        </div>
+      )}
     </ResultContainer>
   );
 }

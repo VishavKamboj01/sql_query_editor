@@ -8,11 +8,10 @@ import {
 } from "./editorStyles";
 import Output from "./Output";
 import Sidebar from "./Sidebar";
-import { table1 } from "../../Tables/tables";
 
-export default function Editor() {
+export default function Editor({ runClicked, onComplete }) {
   const [markerValue, setMarkerValue] = useState("1  ");
-  const [lineCounter, setLineCounter] = useState(2);
+  const [lineCounter, setLineCounter] = useState(1);
   const [code, setCode] = useState("");
   const [enterCount, setEnterCount] = useState(0);
 
@@ -66,7 +65,12 @@ export default function Editor() {
               onChange={handleCodeChange}
               placeholder="Enter your query here..."
             />
-            <Output headers={table1.headers} data={table1.data} />
+
+            {runClicked ? (
+              <Output query={code} nothing={false} onComplete={onComplete} />
+            ) : (
+              <Output nothing={true} query={code} onComplete={onComplete} />
+            )}
           </div>
         </div>
       </CodeAreaContainer>
