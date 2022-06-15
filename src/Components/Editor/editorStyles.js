@@ -25,7 +25,7 @@ export const CodeArea = styled.textarea`
 
 export const LineMarker = styled.textarea`
   height: 100%;
-  width: 20px;
+  width: 30px;
   color: blue;
   padding-top: 5px;
   padding-left: 5px;
@@ -33,4 +33,5 @@ export const LineMarker = styled.textarea`
   outline: none;
   border: 0;
   border-right: 1px solid gray;
+  overflow-y: hidden;
 `;
