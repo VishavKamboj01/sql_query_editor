@@ -6,6 +6,7 @@ import {
   TopBarContainer,
 } from "./homeStyles";
 import Editor from "../Editor/Editor";
+import Output from "../Editor/Output";
 export default function Home() {
   return (
     <BaseContainer>
@@ -17,7 +18,9 @@ export default function Home() {
           <Button>RUN</Button>
         </ButtonsContainer>
       </TopBarContainer>
-      <Editor />
+      <Editor>
+        <Output />
+      </Editor>
     </BaseContainer>
   );
 }

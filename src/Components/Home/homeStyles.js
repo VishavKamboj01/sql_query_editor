@@ -5,6 +5,7 @@ export const BaseContainer = styled.div`
   height: 100vh;
   background-color: lightgrey;
   overflow-x: hidden;
+  overflow-y: hidden;
 `;
 
 export const TopBarContainer = styled.div`

@@ -35,10 +35,28 @@ export const Header = styled.div`
 `;
 
 export const Bar = styled.div`
-  width: 90%;
-  height: 25px;
+  width: 85%;
+  height: 30px;
   background: rgba(128, 128, 128, 0.2);
   color: black;
   margin-bottom: 5px;
+  display: flex;
+  align-items: center;
   font-size: 1.2rem;
+  padding-left: 5px;
+  cursor: pointer;
+
+  transition: 0.5s ease;
+
+  :hover {
+    width: 98%;
+  }
+`;
+
+export const Text = styled.p`
+  font-size: 1.2rem;
+  color: black;
+  margin: 0;
+  padding: 0;
+  margin-left: 5px;
 `;
