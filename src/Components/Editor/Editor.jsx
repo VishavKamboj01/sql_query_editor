@@ -8,12 +8,25 @@ import {
 } from "./editorStyles";
 import Output from "./Output";
 import Sidebar from "./Sidebar";
+import {
+  BaseContainer,
+  Button,
+  ButtonsContainer,
+  TopBarContainer,
+} from "../Home/homeStyles";
 
-export default function Editor({ runClicked, onComplete }) {
+import { getWords } from "../../Trie/Trie";
+
+export default function Editor() {
   const [markerValue, setMarkerValue] = useState("1  ");
   const [lineCounter, setLineCounter] = useState(1);
   const [code, setCode] = useState("");
   const [enterCount, setEnterCount] = useState(0);
+  const [showOutput, setShowOutput] = useState(false);
+
+  const handleRunClicked = () => {
+    if (code !== "") setShowOutput(true);
+  };
 
   const reduceLines = () => {
     let value = markerValue;
@@ -36,8 +49,13 @@ export default function Editor({ runClicked, onComplete }) {
   };
 
   const handleCodeChange = (event) => {
-    console.log(event);
     const value = event.currentTarget.value;
+
+    const editorWords = value.split(" ");
+    const words = getWords(editorWords[editorWords.length - 1]);
+
+    if (editorWords[editorWords.length - 1].length !== 0) console.log(words);
+
     const lines = value.split(/\r|\r\n|\n/);
     setLineCounter(lines.length);
 
@@ -47,6 +65,14 @@ export default function Editor({ runClicked, onComplete }) {
 
   return (
     <EditorContainer>
+      <TopBarContainer>
+        SQL COMPILER
+        <ButtonsContainer>
+          <Button>IMPORT</Button>
+          <Button>SAVE</Button>
+          <Button onClick={handleRunClicked}>RUN</Button>
+        </ButtonsContainer>
+      </TopBarContainer>
       <CodeAreaContainer>
         <Sidebar />
         <div style={{ width: "100%", heigth: "100%", display: "flex" }}>
@@ -66,10 +92,10 @@ export default function Editor({ runClicked, onComplete }) {
               placeholder="Enter your query here..."
             />
 
-            {runClicked ? (
-              <Output query={code} nothing={false} onComplete={onComplete} />
+            {showOutput ? (
+              <Output query={code} nothing={false} />
             ) : (
-              <Output nothing={true} query={code} onComplete={onComplete} />
+              <Output nothing={true} query={code} />
             )}
           </div>
         </div>

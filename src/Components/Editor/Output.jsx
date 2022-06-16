@@ -8,8 +8,8 @@ export default function Output({ nothing, query, onComplete }) {
 
   return (
     <ResultContainer>
-      {!nothing && query !== "" ? (
-        <Table striped bordered hover>
+      {!nothing && query !== "" && table.headers.length > 0 ? (
+        <Table striped bordered hover onClick={onComplete}>
           <thead>
             <tr>
               {table.headers.map((header) => (
