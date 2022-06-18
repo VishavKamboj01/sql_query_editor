@@ -65,7 +65,10 @@ export const InputDiv = styled.div`
   height: 28px;
   background-color: white;
   border: 0;
+  color: black;
+  opacity: 0.8;
   outline: none;
+  caret-color: darkgray;
 
   :focus {
     background: rgba(128, 128, 128, 0.1);

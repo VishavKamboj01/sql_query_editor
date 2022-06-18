@@ -62,9 +62,6 @@ export default function Editor() {
       event.preventDefault();
       const words = code.split(" ");
 
-      // const tag = "<span style='color: orange'>hello</span>";
-      // event.currentTarget.innerHTML = tag;
-
       if (suggesstions.length > 0) {
         //code = code.replace(words[words.length - 1], suggesstions[0]);
         const lastIndex = code.lastIndexOf(words[words.length - 1]);
@@ -72,9 +69,30 @@ export default function Editor() {
         code = code.substring(0, lastIndex) + suggesstions[0];
       }
       event.currentTarget.innerText = code;
+
       setSuggesstions([]);
+    }
+    if (
+      key !== "Enter" &&
+      key !== "ArrowDown" &&
+      key !== "ArrowUp" &&
+      key !== "Backspace"
+    ) {
+      event.currentTarget.innerHTML = changeColor(code);
+      console.log(event.currentTarget.innerHTML);
       updateCursorPosition(index, event.currentTarget);
     }
+  };
+
+  const changeColor = (text) => {
+    let words = text.split(" ");
+    let coloredCode = "";
+    for (let word of words) {
+      if (hasWord(word.trim())) {
+        coloredCode += "<span style='color: #FF5B00'> " + word + " </span>";
+      } else coloredCode += " " + word;
+    }
+    return coloredCode;
   };
 
   const updateSuggesstions = (event, index) => {
@@ -86,7 +104,7 @@ export default function Editor() {
       setSuggesstions([]);
       return;
     }
-    const result = getWords(words[words.length - 1].trim());
+    const result = getWords(words[words.length - 1].trim().toLowerCase());
 
     setSuggesstions(result);
   };
@@ -129,6 +147,7 @@ export default function Editor() {
   };
 
   const handleRunClicked = () => {
+    console.log(code);
     if (code !== "") setShowOutput(true);
   };
 
@@ -177,6 +196,7 @@ export default function Editor() {
                     onKeyDown={(event) => handleKeyPress(index, event)}
                     ref={(ref) => (inputRefs.current[index] = ref)}
                     onInput={(event) => updateSuggesstions(event, index)}
+                    spellCheck={false}
                   />
 
                   <SuggesstionBox id="show-on-focus">
