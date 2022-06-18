@@ -59,3 +59,32 @@ export const LineMarker = styled.textarea`
   border-right: 1px solid gray;
   overflow-y: hidden;
 `;
+
+export const InputDiv = styled.div`
+  width: 100%;
+  height: 28px;
+  background-color: white;
+  border: 0;
+  outline: none;
+
+  :focus {
+    background: rgba(128, 128, 128, 0.1);
+  }
+`;
+
+export const SuggesstionBox = styled.div`
+  width: 300px;
+  position: absolute;
+  top: 30px;
+  display: none;
+  z-index: 1;
+  box-shadow: 0 0 5px lightgray;
+`;
+
+export const Suggesstion = styled.div`
+  width: 100%;
+  height: 30px;
+  background-color: white;
+  border-bottom: 1px solid lightgray;
+  padding-left: 10px;
+`;

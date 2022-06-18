@@ -9,10 +9,37 @@ const keywords = [
   "table",
   "from",
   "on",
-  "inner",
-  "outer",
-  "join",
+  "inner join",
+  "outer join",
+  "self join",
+  "left join",
+  "right join",
   "distinct",
+  "add",
+  "where",
+  "column",
+  "and",
+  "or",
+  "in",
+  "any",
+  "as",
+  "between",
+  "case",
+  "when",
+  "then",
+  "end",
+  "order by",
+  "primary key",
+  "desc",
+  "exists",
+  "foreign key",
+  "group by",
+  "having",
+  "into",
+  "like",
+  "limit",
+  "not",
+  "update",
 ];
 
 class Trie {
@@ -89,4 +116,11 @@ for (let key of keywords) trie.insert(key);
 
 export function getWords(prefix) {
   return trie.autoComplete(prefix);
+}
+
+export function hasWord(prefix) {
+  for (let word of keywords) {
+    if (word === prefix) return true;
+  }
+  return false;
 }

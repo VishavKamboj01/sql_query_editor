@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   CodeArea,
   CodeAreaContainer,
   CodeDiv,
   EditorContainer,
+  InputDiv,
   LineMarker,
+  Suggesstion,
+  SuggesstionBox,
 } from "./editorStyles";
 import Output from "./Output";
 import Sidebar from "./Sidebar";
@@ -15,14 +18,115 @@ import {
   TopBarContainer,
 } from "../Home/homeStyles";
 
-import { getWords } from "../../Trie/Trie";
+import { getWords, hasWord } from "../../Trie/Trie";
+
+const LENGTH = 10;
+const clamp = (min, max, val) => Math.max(min, Math.min(val, max));
 
 export default function Editor() {
   const [markerValue, setMarkerValue] = useState("1  ");
   const [lineCounter, setLineCounter] = useState(1);
   const [code, setCode] = useState("");
-  const [enterCount, setEnterCount] = useState(0);
   const [showOutput, setShowOutput] = useState(false);
+  const [suggesstions, setSuggesstions] = useState([]);
+
+  const [prevTags, setPrevTags] = useState([]);
+  const [data] = useState([...Array(LENGTH).keys()]);
+  const inputRefs = useRef([]);
+
+  useEffect(() => {
+    inputRefs.current[0].focus();
+  }, []);
+
+  const handleKeyPress = (index, event) => {
+    let code = event.currentTarget.innerText;
+
+    const key = event.key;
+
+    // const tags = prevTags;
+    // if (!tags.includes(inputRefs.current[index].childNodes))
+    //   tags.push(inputRefs.current[index].childNodes);
+    // setPrevTags(tags);
+
+    if (key === "Enter" || key === "ArrowDown") {
+      event.preventDefault();
+
+      moveCursor(index + 1);
+      incrementMarkerValue(index + 2);
+    } else if (key === "ArrowUp" || (key === "Backspace" && code === "")) {
+      if (index !== 0) {
+        moveCursor(index - 1);
+        decrementMarkerValue(index + 1);
+      }
+    } else if (key === "Tab") {
+      event.preventDefault();
+      const words = code.split(" ");
+
+      // const tag = "<span style='color: orange'>hello</span>";
+      // event.currentTarget.innerHTML = tag;
+
+      if (suggesstions.length > 0) {
+        //code = code.replace(words[words.length - 1], suggesstions[0]);
+        const lastIndex = code.lastIndexOf(words[words.length - 1]);
+
+        code = code.substring(0, lastIndex) + suggesstions[0];
+      }
+      event.currentTarget.innerText = code;
+      setSuggesstions([]);
+      updateCursorPosition(index, event.currentTarget);
+    }
+  };
+
+  const updateSuggesstions = (event, index) => {
+    alignSuggesstionBox(index, event);
+    const code = event.currentTarget.innerText;
+    const words = code.split(" ");
+
+    if (code === "" || hasWord(words[words.length - 1].trim())) {
+      setSuggesstions([]);
+      return;
+    }
+    const result = getWords(words[words.length - 1].trim());
+
+    setSuggesstions(result);
+  };
+
+  const alignSuggesstionBox = (index, event) => {
+    const text = event.currentTarget.innerText;
+
+    const ele = document.getElementById("show-on-focus");
+    ele.style.display = "block";
+    const margin = 30 * (index + 1);
+    ele.style.top = margin + "px";
+    ele.style.left = text.length * 7 + "px";
+  };
+
+  const updateCursorPosition = (index, target) => {
+    const range = document.createRange();
+    const sel = window.getSelection();
+    range.selectNodeContents(target);
+    range.collapse(false);
+    sel.removeAllRanges();
+    sel.addRange(range);
+    target.focus();
+  };
+
+  const moveCursor = (index) => {
+    const nextIndex = clamp(0, data.length - 1, index);
+    inputRefs.current[nextIndex].focus();
+  };
+
+  const incrementMarkerValue = (index) => {
+    let value = markerValue;
+    value = value + "" + index + "  ";
+    setMarkerValue(value);
+  };
+
+  const decrementMarkerValue = (index) => {
+    let value = markerValue;
+    value = value.replace(index + "  ", "");
+    setMarkerValue(value);
+  };
 
   const handleRunClicked = () => {
     if (code !== "") setShowOutput(true);
@@ -34,33 +138,6 @@ export default function Editor() {
 
     value = value.slice(0, index);
     setMarkerValue(value);
-  };
-
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter") {
-      setEnterCount(enterCount + 1);
-
-      if (lineCounter >= 1) {
-        let val = markerValue;
-        val = val.concat(lineCounter + 1 + " ");
-        setMarkerValue(val);
-      }
-    }
-  };
-
-  const handleCodeChange = (event) => {
-    const value = event.currentTarget.value;
-
-    const editorWords = value.split(" ");
-    const words = getWords(editorWords[editorWords.length - 1]);
-
-    if (editorWords[editorWords.length - 1].length !== 0) console.log(words);
-
-    const lines = value.split(/\r|\r\n|\n/);
-    setLineCounter(lines.length);
-
-    if (lineCounter > lines.length) reduceLines();
-    setCode(value);
   };
 
   return (
@@ -85,12 +162,45 @@ export default function Editor() {
               flexDirection: "column",
             }}
           >
-            <CodeArea
+            {/* <CodeArea
               type="textarea"
               onKeyDown={handleKeyDown}
               onChange={handleCodeChange}
               placeholder="Enter your query here..."
-            />
+            /> */}
+            <CodeDiv>
+              {data.map((data, index) => (
+                <div key={index} id="div" style={{ position: "relative" }}>
+                  <InputDiv
+                    className="input"
+                    contentEditable={true}
+                    onKeyDown={(event) => handleKeyPress(index, event)}
+                    ref={(ref) => (inputRefs.current[index] = ref)}
+                    onInput={(event) => updateSuggesstions(event, index)}
+                  />
+
+                  <SuggesstionBox id="show-on-focus">
+                    {suggesstions.map((item) => (
+                      <Suggesstion key={item}>
+                        {item}
+                        {"  "}
+                        <p
+                          style={{
+                            color: "black",
+                            opacity: 0.3,
+                            margin: 0,
+                            display: "inline",
+                            justifySelf: "flex-end",
+                          }}
+                        >
+                          (Tab to complete)
+                        </p>
+                      </Suggesstion>
+                    ))}
+                  </SuggesstionBox>
+                </div>
+              ))}
+            </CodeDiv>
 
             {showOutput ? (
               <Output query={code} nothing={false} />
