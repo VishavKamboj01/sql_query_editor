@@ -12,15 +12,18 @@ import {
 import Output from "./Output";
 import Sidebar from "./Sidebar";
 import {
+  AtlanLogo,
   BaseContainer,
   Button,
   ButtonsContainer,
   TopBarContainer,
 } from "../Home/homeStyles";
-
+import { FaPlay, FaSave } from "react-icons/fa";
+import { BiImport } from "react-icons/bi";
+import logo from "../../images/atlan.png";
 import { getWords, hasWord } from "../../Trie/Trie";
 
-const LENGTH = 10;
+const LENGTH = 18;
 const clamp = (min, max, val) => Math.max(min, Math.min(val, max));
 
 export default function Editor() {
@@ -76,7 +79,9 @@ export default function Editor() {
       key !== "Enter" &&
       key !== "ArrowDown" &&
       key !== "ArrowUp" &&
-      key !== "Backspace"
+      key !== "Backspace" &&
+      key !== "ArrowRight" &&
+      key !== "ArrowLeft"
     ) {
       event.currentTarget.innerHTML = changeColor(code);
       console.log(event.currentTarget.innerHTML);
@@ -89,7 +94,7 @@ export default function Editor() {
     let coloredCode = "";
     for (let word of words) {
       if (hasWord(word.trim())) {
-        coloredCode += "<span style='color: #FF5B00'> " + word + " </span>";
+        coloredCode += "<span style='color: #FC4F4F'> " + word + " </span>";
       } else coloredCode += " " + word;
     }
     return coloredCode;
@@ -97,7 +102,7 @@ export default function Editor() {
 
   const updateSuggesstions = (event, index) => {
     alignSuggesstionBox(index, event);
-    const code = event.currentTarget.innerText;
+    const code = event.currentTarget.innerText.trim();
     const words = code.split(" ");
 
     if (code === "" || hasWord(words[words.length - 1].trim())) {
@@ -107,6 +112,7 @@ export default function Editor() {
     const result = getWords(words[words.length - 1].trim().toLowerCase());
 
     setSuggesstions(result);
+    setCode(code);
   };
 
   const alignSuggesstionBox = (index, event) => {
@@ -151,22 +157,24 @@ export default function Editor() {
     if (code !== "") setShowOutput(true);
   };
 
-  const reduceLines = () => {
-    let value = markerValue;
-    const index = value.indexOf(lineCounter.toString());
-
-    value = value.slice(0, index);
-    setMarkerValue(value);
-  };
-
   return (
     <EditorContainer>
       <TopBarContainer>
+        <AtlanLogo src={logo} />
         SQL COMPILER
         <ButtonsContainer>
-          <Button>IMPORT</Button>
-          <Button>SAVE</Button>
-          <Button onClick={handleRunClicked}>RUN</Button>
+          {/* <Button>
+            <BiImport style={{ marginRight: 5 }} size={20} color="white" />
+            IMPORT
+          </Button> */}
+          <Button style={{ background: "#F66B0E" }}>
+            <FaSave style={{ marginRight: 5 }} size={20} color="white" />
+            SAVE
+          </Button>
+          <Button onClick={handleRunClicked} style={{ background: "#14C38E" }}>
+            <FaPlay style={{ marginRight: 5 }} size={20} color="white" />
+            RUN
+          </Button>
         </ButtonsContainer>
       </TopBarContainer>
       <CodeAreaContainer>

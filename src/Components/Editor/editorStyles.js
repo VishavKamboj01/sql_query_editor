@@ -37,7 +37,7 @@ export const CodeArea = styled.textarea`
 export const CodeDiv = styled.div`
   width: 100%;
   height: 60%;
-  background-color: white;
+  background-color: #f9fafc;
   text-align: left;
   padding: 5px;
   font-size: 1.2rem;
@@ -51,9 +51,9 @@ export const LineMarker = styled.textarea`
   width: 30px;
   color: black;
   opacity: 0.6;
-  padding-top: 5px;
+  padding-top: 3px;
 
-  font-size: 1.2rem;
+  font-size: 1.17rem;
   outline: none;
   border: 0;
   border-right: 1px solid gray;
@@ -69,14 +69,17 @@ export const InputDiv = styled.div`
   opacity: 0.8;
   outline: none;
   caret-color: darkgray;
+  padding-left: 5px;
 
   :focus {
-    background: rgba(128, 128, 128, 0.1);
+    background: rgba(66, 194, 255, 0.1);
+    border-radius: 5px;
   }
 `;
 
 export const SuggesstionBox = styled.div`
   width: 300px;
+  max-height: 400px;
   position: absolute;
   top: 30px;
   display: none;
