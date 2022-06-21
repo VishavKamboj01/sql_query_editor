@@ -2,45 +2,26 @@ import React, { useEffect, useState } from "react";
 import { ResultContainer } from "./outputStyles";
 import { Table } from "react-bootstrap";
 import { executeQuery } from "../../Tables/tables";
-import { CSVDownload, CSVLink } from "react-csv";
 
-export default function Output({ nothing, query, onComplete }) {
-  const table = executeQuery(query);
-
-  const prepareData = () => {
-    let rows = [];
-    rows.push(table.headers);
-
-    for (let obj of table.data) {
-      let row = [];
-      row.push(obj.id);
-      row.push(obj.firstName);
-      row.push(obj.lastName);
-      row.push(obj.username);
-      rows.push(row);
-    }
-
-    return rows;
-  };
+export default function Output({ query }) {
+  let table = executeQuery(query);
 
   return (
     <ResultContainer>
-      <CSVLink data={prepareData()}>Download</CSVLink>
-
-      {!nothing && query !== "" && table.headers.length > 0 ? (
-        <Table striped bordered hover onClick={onComplete}>
+      {table !== undefined ? (
+        <Table striped bordered hover>
           <thead>
-            <tr style={{ background: "#1a132f", color: "white", opacity: 0.6 }}>
-              {table.headers.map((header) => (
+            <tr style={{ background: "#F66B0E", color: "white", opacity: 0.7 }}>
+              {table[0].map((header) => (
                 <th>{header}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {table.data.map((item) => (
+            {table[1].map((item) => (
               <tr>
-                {Object.keys(item).map((key) => (
-                  <td>{item[key]}</td>
+                {item.map((data) => (
+                  <td>{data}</td>
                 ))}
               </tr>
             ))}

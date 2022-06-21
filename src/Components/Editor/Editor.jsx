@@ -9,7 +9,7 @@ import {
   Suggesstion,
   SuggesstionBox,
 } from "./editorStyles";
-import Output from "./Output";
+import Output, { prepareData } from "./Output";
 import Sidebar from "./Sidebar";
 import {
   AtlanLogo,
@@ -18,48 +18,66 @@ import {
   ButtonsContainer,
   TopBarContainer,
 } from "../Home/homeStyles";
-import { FaPlay, FaSave } from "react-icons/fa";
-import { BiImport } from "react-icons/bi";
+import { FaPlay, FaDownload } from "react-icons/fa";
 import logo from "../../images/atlan.png";
 import { getWords, hasWord } from "../../Trie/Trie";
+import { CSVLink } from "react-csv";
+import { table1 } from "../../Tables/tables";
+import { Dropdown } from "react-bootstrap";
 
 const LENGTH = 18;
 const clamp = (min, max, val) => Math.max(min, Math.min(val, max));
 
 export default function Editor() {
   const [markerValue, setMarkerValue] = useState("1  ");
-  const [lineCounter, setLineCounter] = useState(1);
+  const [tableData, setTableData] = useState("");
   const [code, setCode] = useState("");
-  const [showOutput, setShowOutput] = useState(false);
+  const [query, setQuery] = useState("");
+  const [currentRef, setCurrentRef] = useState(0);
+  const [runClicked, setRunClicked] = useState(false);
   const [suggesstions, setSuggesstions] = useState([]);
-
-  const [prevTags, setPrevTags] = useState([]);
   const [data] = useState([...Array(LENGTH).keys()]);
   const inputRefs = useRef([]);
 
   useEffect(() => {
     inputRefs.current[0].focus();
+    let query = "select * from customer;";
+
+    inputRefs.current[0].innerHTML = changeColor(query);
+    updateCursorPosition(inputRefs.current[0]);
   }, []);
 
   const handleKeyPress = (index, event) => {
     let code = event.currentTarget.innerText;
-
     const key = event.key;
-
-    // const tags = prevTags;
-    // if (!tags.includes(inputRefs.current[index].childNodes))
-    //   tags.push(inputRefs.current[index].childNodes);
-    // setPrevTags(tags);
 
     if (key === "Enter" || key === "ArrowDown") {
       event.preventDefault();
-
+      setCurrentRef(index + 1);
       moveCursor(index + 1);
       incrementMarkerValue(index + 2);
+
+      //Insert a tab char
+      if (!event.currentTarget.innerText.endsWith(";")) {
+        var editor = inputRefs.current[index + 1];
+        var doc = editor.ownerDocument.defaultView;
+        var sel = doc.getSelection();
+        var range = sel.getRangeAt(0);
+
+        var tabNode = document.createTextNode("\u00a0\u00a0\u00a0\u00a0");
+        range.insertNode(tabNode);
+
+        range.setStartAfter(tabNode);
+        range.setEndAfter(tabNode);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
     } else if (key === "ArrowUp" || (key === "Backspace" && code === "")) {
       if (index !== 0) {
         moveCursor(index - 1);
         decrementMarkerValue(index + 1);
+        updateCursorPosition(inputRefs.current[index - 1]);
+        setCurrentRef(index - 1);
       }
     } else if (key === "Tab") {
       event.preventDefault();
@@ -84,8 +102,7 @@ export default function Editor() {
       key !== "ArrowLeft"
     ) {
       event.currentTarget.innerHTML = changeColor(code);
-      console.log(event.currentTarget.innerHTML);
-      updateCursorPosition(index, event.currentTarget);
+      updateCursorPosition(event.currentTarget);
     }
   };
 
@@ -94,7 +111,10 @@ export default function Editor() {
     let coloredCode = "";
     for (let word of words) {
       if (hasWord(word.trim())) {
-        coloredCode += "<span style='color: #FC4F4F'> " + word + " </span>";
+        coloredCode +=
+          "<span style='color: #FC4F4F; font-weight:500;' > " +
+          word +
+          " </span>";
       } else coloredCode += " " + word;
     }
     return coloredCode;
@@ -125,7 +145,7 @@ export default function Editor() {
     ele.style.left = text.length * 7 + "px";
   };
 
-  const updateCursorPosition = (index, target) => {
+  const updateCursorPosition = (target) => {
     const range = document.createRange();
     const sel = window.getSelection();
     range.selectNodeContents(target);
@@ -153,8 +173,32 @@ export default function Editor() {
   };
 
   const handleRunClicked = () => {
-    console.log(code);
-    if (code !== "") setShowOutput(true);
+    let query = "";
+    for (let i = 0; i < inputRefs.current.length; i++) {
+      inputRefs.current[i].innerHTML = inputRefs.current[i].innerHTML.replace(
+        /\&nbsp;/g,
+        ""
+      );
+      let data = inputRefs.current[i].innerText;
+      query += data;
+    }
+
+    setQuery(query);
+    setRunClicked(true);
+  };
+
+  const handleCSVClick = () => {
+    let table = [];
+    table.push(table1[0]);
+    for (let row of table1[1]) table.push(row);
+    console.log(table);
+    setTableData(table);
+  };
+
+  const handleMenuItemClick = (item) => {
+    inputRefs.current[currentRef].innerHTML = changeColor(
+      item.target.innerText
+    );
   };
 
   return (
@@ -163,19 +207,53 @@ export default function Editor() {
         <AtlanLogo src={logo} />
         SQL COMPILER
         <ButtonsContainer>
-          {/* <Button>
-            <BiImport style={{ marginRight: 5 }} size={20} color="white" />
-            IMPORT
-          </Button> */}
-          <Button style={{ background: "#F66B0E" }}>
-            <FaSave style={{ marginRight: 5 }} size={20} color="white" />
-            SAVE
-          </Button>
           <Button onClick={handleRunClicked} style={{ background: "#14C38E" }}>
             <FaPlay style={{ marginRight: 5 }} size={20} color="white" />
             RUN
           </Button>
+          <CSVLink
+            hidden={!runClicked}
+            style={{
+              textDecoration: "none",
+              width: 90,
+              height: 35,
+              background: "#F66B0E",
+              color: "white",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 30,
+              marginRight: 20,
+            }}
+            data={table1}
+            onClick={handleCSVClick}
+            filename={"table-data"}
+          >
+            <FaDownload style={{ marginRight: 5 }} size={18} color="white" />
+            CSV
+          </CSVLink>
         </ButtonsContainer>
+        <Dropdown style={{ marginLeft: 600, position: "absolute" }}>
+          <Dropdown.Toggle
+            variant="success"
+            id="dropdown-basic"
+            style={{
+              background: "rgba(255,255,255,0.2)",
+              border: 0,
+              borderRadius: 20,
+            }}
+          >
+            Query Set
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu onClick={handleMenuItemClick}>
+            <Dropdown.Item>select * from customer;</Dropdown.Item>
+            <Dropdown.Item>
+              select first_name, last_name from customer where state = "OH";
+            </Dropdown.Item>
+            <Dropdown.Item>Something else</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
       </TopBarContainer>
       <CodeAreaContainer>
         <Sidebar />
@@ -189,12 +267,6 @@ export default function Editor() {
               flexDirection: "column",
             }}
           >
-            {/* <CodeArea
-              type="textarea"
-              onKeyDown={handleKeyDown}
-              onChange={handleCodeChange}
-              placeholder="Enter your query here..."
-            /> */}
             <CodeDiv>
               {data.map((data, index) => (
                 <div key={index} id="div" style={{ position: "relative" }}>
@@ -230,11 +302,7 @@ export default function Editor() {
               ))}
             </CodeDiv>
 
-            {showOutput ? (
-              <Output query={code} nothing={false} />
-            ) : (
-              <Output nothing={true} query={code} />
-            )}
+            <Output query={query} />
           </div>
         </div>
       </CodeAreaContainer>

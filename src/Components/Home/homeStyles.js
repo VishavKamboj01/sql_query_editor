@@ -17,6 +17,7 @@ export const TopBarContainer = styled.div`
   color: white;
   display: flex;
   align-items: center;
+  position: "relative";
 `;
 
 export const AtlanLogo = styled.img`
@@ -32,11 +33,11 @@ export const ButtonsContainer = styled.div`
   padding: 20px;
   border-radius: 10px;
   display: flex;
-  margin-left: 100px;
+  margin-left: 120px;
 `;
 
 export const Button = styled.div`
-  width: 110px;
+  width: 90px;
   height: 35px;
   cursor: pointer;
   display: flex;
