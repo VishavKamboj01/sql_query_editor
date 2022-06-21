@@ -25,7 +25,7 @@ import { FaPlay, FaDownload } from "react-icons/fa";
 import logo from "../../images/atlan.png";
 import { getWords, hasWord } from "../../Trie/Trie";
 import { CSVLink } from "react-csv";
-import { table1 } from "../../Tables/tables";
+import { executeQuery, table1 } from "../../Tables/tables";
 import { Dropdown } from "react-bootstrap";
 
 const LENGTH = 18;
@@ -53,6 +53,7 @@ export default function Editor() {
 
   const handleKeyPress = (index, event) => {
     let code = event.currentTarget.innerText;
+    let tempCode = code;
     const key = event.key;
 
     if (textSelection !== "") {
@@ -113,9 +114,25 @@ export default function Editor() {
       key !== "ArrowRight" &&
       key !== "ArrowLeft"
     ) {
+      //Handling space issue
+      let position = cursorPosition();
+      tempCode = tempCode.trim();
+
+      if (position + 2 < tempCode.length) {
+        return;
+      }
+
       event.currentTarget.innerHTML = changeColor(code);
       updateCursorPosition(event.currentTarget);
     }
+  };
+
+  const cursorPosition = () => {
+    const sel = document.getSelection();
+    sel.modify("extend", "backward", "paragraphboundary");
+    const pos = sel.toString().length;
+    if (sel.anchorNode != undefined) sel.collapseToEnd();
+    return pos;
   };
 
   const changeColor = (text) => {
@@ -215,9 +232,10 @@ export default function Editor() {
   const handleCSVClick = () => {
     if (query === "") return;
     let rows = [];
-    rows.push(table1[0]); //headers
+    let table = executeQuery(query);
+    rows.push(table[0]); //headers
 
-    for (let row of table1[1]) rows.push(row);
+    for (let row of table[1]) rows.push(row);
 
     setTableData(rows);
   };
@@ -278,7 +296,7 @@ export default function Editor() {
             <Dropdown.Item>
               select first_name, last_name from customer where state = "OH";
             </Dropdown.Item>
-            <Dropdown.Item>Something else</Dropdown.Item>
+            <Dropdown.Item>select * from rental;</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
         <AutoCompletion>

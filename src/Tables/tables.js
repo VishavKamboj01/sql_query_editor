@@ -1,9 +1,31 @@
-export function executeQuery(query) {
-  query = query.toLowerCase();
-  if (query.includes("select") && query.includes("*")) return table1;
+import { FormText } from "react-bootstrap";
 
-  if (query.includes("select")) {
+export function executeQuery(query) {
+  console.log(query);
+  query = query.toLowerCase();
+  if (
+    query.includes("select") &&
+    query.includes("*") &&
+    query.includes("customer")
+  )
+    return table1;
+
+  if (query.includes("first_name") && query.includes("last_name")) {
+    const table = [["first_name", "last_name"]];
+
+    let data = [];
+    for (let row of table1[1]) {
+      if (row[6] !== "OH") continue;
+      let temp = [];
+      temp.push(row[0]);
+      temp.push(row[1]);
+      data.push(temp);
+    }
+    table.push(data);
+    return table;
   }
+
+  if (query.includes("rental")) return rentalTable;
 
   return query === "" ? undefined : table1;
 }
@@ -31,7 +53,7 @@ export const table1 = [
       "6649 N Blue Gum St",
       "New Orleans",
       "Orleans",
-      "LA",
+      "OH",
       70116,
       "504-621-8927",
       "504-845-1427",
@@ -132,7 +154,7 @@ export const table1 = [
       "7 W Jackson Blvd",
       "San Jose",
       "Santa Clara",
-      "CA",
+      "OH",
       95111,
       "408-752-3500",
       "408-813-1105",
@@ -147,12 +169,26 @@ export const table1 = [
       "5 Boston Ave #88",
       "Sioux Falls",
       "Minnehaha",
-      "SD",
+      "OH",
       57105,
       "605-414-2147",
       "605-794-4895",
       "sage_wieser@cox.net",
       "http://www.truhlarandtruhlarattys.com",
     ],
+  ],
+];
+
+export const rentalTable = [
+  ["Id", "customer", "movie", "date_out", "rental_fee"],
+  [
+    ["1", "Sage", "Iron Man", "2022-05-26", "$3"],
+    ["2", "Leota", "Spider Man", "2022-04-12", "$5"],
+    ["3", "Simona", "Iron Man", "2022-03-06", "$3"],
+    ["4", "donette", "Lord of Rings", "2022-05-04", "$6"],
+    ["5", "Mitsue", "Captain America", "2022-01-07", "$2"],
+    ["6", "John", "Iron Man", "2021-03-23", "$6"],
+    ["7", "Karan", "Iron Man", "2022-02-12", "$8"],
+    ["8", "Justin", "Thor", "2021-03-19", "$9"],
   ],
 ];
