@@ -20,15 +20,15 @@ export default function Output({ query }) {
               }}
             >
               {table[0].map((header) => (
-                <th>{header}</th>
+                <th key={header}>{header}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {table[1].map((item) => (
-              <tr>
+              <tr key={item}>
                 {item.map((data) => (
-                  <td>{data}</td>
+                  <td key={data}>{data}</td>
                 ))}
               </tr>
             ))}

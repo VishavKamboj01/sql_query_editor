@@ -1,7 +1,6 @@
 import { FormText } from "react-bootstrap";
 
 export function executeQuery(query) {
-  console.log(query);
   query = query.toLowerCase();
   if (
     query.includes("select") &&
@@ -94,7 +93,7 @@ export const table1 = [
       "Feltz Printing Service",
       "639 Main St",
       "Anchorage",
-      "Anchorage",
+      "Anchorag",
       "AK",
       99501,
       "907-385-4412",
@@ -123,7 +122,7 @@ export const table1 = [
       "Chapman, Ross E Esq",
       "3 Mcauley Dr",
       "Ashland",
-      "Ashland",
+      "Ashlan",
       "OH",
       44805,
       "419-503-2484",
