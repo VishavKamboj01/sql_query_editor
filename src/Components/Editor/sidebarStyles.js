@@ -7,6 +7,7 @@ export const SideBarContainer = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
+  font-family: "Source code pro";
 `;
 
 export const Databases = styled.div`
@@ -46,12 +47,12 @@ export const Bar = styled.div`
   font-size: 1.2rem;
   padding-left: 5px;
   cursor: pointer;
-  border-radius: 20px;
-
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
   transition: 0.5s ease;
 
   :hover {
-    width: 100%;
+    width: 99%;
   }
 `;
 

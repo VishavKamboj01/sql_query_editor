@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Bar,
   Databases,
@@ -11,17 +11,30 @@ import { FaDatabase } from "react-icons/fa";
 import { BiTable } from "react-icons/bi";
 
 export default function Sidebar() {
+  const [currentSchema, setCurrentSchema] = useState("Rent-and-Run");
+  const [currentTable, setCurrentTable] = useState("");
+
   return (
     <SideBarContainer>
       <Databases>
         <Header>SCHEMAS</Header>
-        <Bar>
+        <Bar
+          style={{
+            width: `${currentSchema === "Rent-and-Run" ? "99%" : "85%"}`,
+          }}
+          onClick={() => setCurrentSchema("Rent-and-Run")}
+        >
           <FaDatabase size={15} color="#F66B0E" />
           <Text>Rent-and-Run</Text>
         </Bar>
-        <Bar>
+        <Bar
+          style={{
+            width: `${currentSchema === "Backgrounds" ? "99%" : "85%"}`,
+          }}
+          onClick={() => setCurrentSchema("Backgrounds")}
+        >
           <FaDatabase size={15} color="#F66B0E" />
-          <Text>decorate-my-background</Text>
+          <Text>Backgrounds</Text>
         </Bar>
       </Databases>
       <Tables>

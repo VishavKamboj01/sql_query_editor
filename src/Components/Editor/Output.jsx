@@ -11,7 +11,14 @@ export default function Output({ query }) {
       {table !== undefined ? (
         <Table striped bordered hover>
           <thead>
-            <tr style={{ background: "#F66B0E", color: "white", opacity: 0.7 }}>
+            <tr
+              style={{
+                background: "#000",
+                color: "white",
+                opacity: 0.3,
+                border: 0,
+              }}
+            >
               {table[0].map((header) => (
                 <th>{header}</th>
               ))}

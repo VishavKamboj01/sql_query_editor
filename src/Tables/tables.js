@@ -5,7 +5,7 @@ export function executeQuery(query) {
   if (query.includes("select")) {
   }
 
-  return undefined;
+  return query === "" ? undefined : table1;
 }
 
 export const table1 = [

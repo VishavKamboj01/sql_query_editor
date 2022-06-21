@@ -9,13 +9,16 @@ import {
   Suggesstion,
   SuggesstionBox,
 } from "./editorStyles";
-import Output, { prepareData } from "./Output";
+import Output from "./Output";
 import Sidebar from "./Sidebar";
 import {
   AtlanLogo,
+  AutoCompletion,
   BaseContainer,
   Button,
   ButtonsContainer,
+  Indicator,
+  Text,
   TopBarContainer,
 } from "../Home/homeStyles";
 import { FaPlay, FaDownload } from "react-icons/fa";
@@ -29,27 +32,32 @@ const LENGTH = 18;
 const clamp = (min, max, val) => Math.max(min, Math.min(val, max));
 
 export default function Editor() {
+  const [textSelection, setTextSelection] = useState("");
   const [markerValue, setMarkerValue] = useState("1  ");
-  const [tableData, setTableData] = useState("");
+  const [tableData, setTableData] = useState([]);
   const [code, setCode] = useState("");
   const [query, setQuery] = useState("");
   const [currentRef, setCurrentRef] = useState(0);
-  const [runClicked, setRunClicked] = useState(false);
+  const [indicatorClick, setIndicatorClick] = useState(false);
+
   const [suggesstions, setSuggesstions] = useState([]);
   const [data] = useState([...Array(LENGTH).keys()]);
   const inputRefs = useRef([]);
 
   useEffect(() => {
     inputRefs.current[0].focus();
-    let query = "select * from customer;";
-
-    inputRefs.current[0].innerHTML = changeColor(query);
-    updateCursorPosition(inputRefs.current[0]);
+    // let query = "select * from customer;";
+    // inputRefs.current[0].innerHTML = changeColor(query);
+    // updateCursorPosition(inputRefs.current[0]);
   }, []);
 
   const handleKeyPress = (index, event) => {
     let code = event.currentTarget.innerText;
     const key = event.key;
+
+    if (textSelection !== "") {
+      event.currentTarget.innerHTML = "";
+    }
 
     if (key === "Enter" || key === "ArrowDown") {
       event.preventDefault();
@@ -57,8 +65,12 @@ export default function Editor() {
       moveCursor(index + 1);
       incrementMarkerValue(index + 2);
 
+      if (suggesstions.length !== 0) {
+        setSuggesstions([]);
+      }
+
       //Insert a tab char
-      if (!event.currentTarget.innerText.endsWith(";")) {
+      if (!code.endsWith(";") && code.trim() !== "") {
         var editor = inputRefs.current[index + 1];
         var doc = editor.ownerDocument.defaultView;
         var sel = doc.getSelection();
@@ -112,15 +124,29 @@ export default function Editor() {
     for (let word of words) {
       if (hasWord(word.trim())) {
         coloredCode +=
-          "<span style='color: #FC4F4F; font-weight:500;' > " +
+          "<span style='color: #FC4F4F; font-weight:600; font-style:italic' > " +
           word +
           " </span>";
+      } else if (word.startsWith('"')) {
+        let removed = false;
+        if (word.endsWith(";")) {
+          word = word.replace(";", "");
+          removed = true;
+        }
+
+        coloredCode +=
+          "<span style='color: #4E9F3D; font-weight:500;' > " +
+          word +
+          " </span>";
+
+        if (removed) coloredCode += ";";
       } else coloredCode += " " + word;
     }
     return coloredCode;
   };
 
   const updateSuggesstions = (event, index) => {
+    if (indicatorClick) return;
     alignSuggesstionBox(index, event);
     const code = event.currentTarget.innerText.trim();
     const words = code.split(" ");
@@ -175,24 +201,25 @@ export default function Editor() {
   const handleRunClicked = () => {
     let query = "";
     for (let i = 0; i < inputRefs.current.length; i++) {
-      inputRefs.current[i].innerHTML = inputRefs.current[i].innerHTML.replace(
-        /\&nbsp;/g,
-        ""
-      );
+      // inputRefs.current[i].innerHTML = inputRefs.current[i].innerHTML.replace(
+      //   /\&nbsp;/g,
+      //   ""
+      // );
       let data = inputRefs.current[i].innerText;
       query += data;
     }
 
     setQuery(query);
-    setRunClicked(true);
   };
 
   const handleCSVClick = () => {
-    let table = [];
-    table.push(table1[0]);
-    for (let row of table1[1]) table.push(row);
-    console.log(table);
-    setTableData(table);
+    if (query === "") return;
+    let rows = [];
+    rows.push(table1[0]); //headers
+
+    for (let row of table1[1]) rows.push(row);
+
+    setTableData(rows);
   };
 
   const handleMenuItemClick = (item) => {
@@ -212,20 +239,20 @@ export default function Editor() {
             RUN
           </Button>
           <CSVLink
-            hidden={!runClicked}
             style={{
               textDecoration: "none",
               width: 90,
               height: 35,
-              background: "#F66B0E",
+              background: `${query.length !== 0 ? "#F66B0E" : "#C84B31"}`,
               color: "white",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               borderRadius: 30,
               marginRight: 20,
+              cursor: `${query.length !== 0 ? "pointer" : "not-allowed"}`,
             }}
-            data={table1}
+            data={tableData}
             onClick={handleCSVClick}
             filename={"table-data"}
           >
@@ -233,9 +260,9 @@ export default function Editor() {
             CSV
           </CSVLink>
         </ButtonsContainer>
-        <Dropdown style={{ marginLeft: 600, position: "absolute" }}>
+        <Dropdown style={{ marginLeft: 50 }}>
           <Dropdown.Toggle
-            variant="success"
+            variant="primary"
             id="dropdown-basic"
             style={{
               background: "rgba(255,255,255,0.2)",
@@ -254,6 +281,22 @@ export default function Editor() {
             <Dropdown.Item>Something else</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
+        <AutoCompletion>
+          <Indicator
+            style={{
+              background: `${indicatorClick ? "#F32424" : "#54e346"}`,
+              boxShadow: `${
+                indicatorClick ? "0 0 20px #F32424" : "0 0 20px#54e346"
+              }`,
+            }}
+            onClick={() =>
+              indicatorClick
+                ? setIndicatorClick(false)
+                : setIndicatorClick(true)
+            }
+          />
+          <Text>Auto Completion</Text>
+        </AutoCompletion>
       </TopBarContainer>
       <CodeAreaContainer>
         <Sidebar />
@@ -267,7 +310,10 @@ export default function Editor() {
               flexDirection: "column",
             }}
           >
-            <CodeDiv>
+            <CodeDiv
+              contentEditable={textSelection !== ""}
+              suppressContentEditableWarning={true}
+            >
               {data.map((data, index) => (
                 <div key={index} id="div" style={{ position: "relative" }}>
                   <InputDiv
@@ -277,6 +323,10 @@ export default function Editor() {
                     ref={(ref) => (inputRefs.current[index] = ref)}
                     onInput={(event) => updateSuggesstions(event, index)}
                     spellCheck={false}
+                    onMouseMoveCapture={() =>
+                      setTextSelection(window.getSelection().toString())
+                    }
+                    onMouseUp={() => setTextSelection("")}
                   />
 
                   <SuggesstionBox id="show-on-focus">
@@ -286,10 +336,11 @@ export default function Editor() {
                         {"  "}
                         <p
                           style={{
-                            color: "black",
-                            opacity: 0.3,
+                            color: "#A0BCC2",
+                            opacity: 0.6,
                             margin: 0,
                             display: "inline",
+                            fontFamily: "monospace",
                             justifySelf: "flex-end",
                           }}
                         >

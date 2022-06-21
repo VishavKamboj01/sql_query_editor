@@ -17,7 +17,7 @@ export const TopBarContainer = styled.div`
   color: white;
   display: flex;
   align-items: center;
-  position: "relative";
+  font-family: "Source code pro";
 `;
 
 export const AtlanLogo = styled.img`
@@ -46,4 +46,26 @@ export const Button = styled.div`
   align-items: center;
   background: rgba(128, 128, 128, 0.7);
   border-radius: 30px;
+`;
+
+export const AutoCompletion = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 40px;
+`;
+
+export const Indicator = styled.div`
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  transition: 0.3s ease;
+  cursor: pointer;
+`;
+
+export const Text = styled.p`
+  margin: 0;
+  padding: 0;
+  margin-left: 10px;
+  color: white;
 `;
