@@ -46,9 +46,6 @@ export default function Editor() {
 
   useEffect(() => {
     inputRefs.current[0].focus();
-    // let query = "select * from customer;";
-    // inputRefs.current[0].innerHTML = changeColor(query);
-    // updateCursorPosition(inputRefs.current[0]);
   }, []);
 
   const handleKeyPress = (index, event) => {
@@ -99,9 +96,7 @@ export default function Editor() {
       const words = code.split(" ");
 
       if (suggesstions.length > 0) {
-        //code = code.replace(words[words.length - 1], suggesstions[0]);
         const lastIndex = code.lastIndexOf(words[words.length - 1]);
-
         code = code.substring(0, lastIndex) + suggesstions[0];
       } else return;
       event.currentTarget.innerText = code;
@@ -114,10 +109,11 @@ export default function Editor() {
       key !== "ArrowUp" &&
       key !== "Backspace" &&
       key !== "ArrowRight" &&
-      key !== "ArrowLeft"
+      key !== "ArrowLeft" &&
+      key !== "Control" &&
+      key !== "Shift"
     ) {
       //Handling space issue
-
       cursorPos++;
       if (cursorPos < tempCode.length) return;
 
@@ -218,10 +214,6 @@ export default function Editor() {
   const handleRunClicked = () => {
     let query = "";
     for (let i = 0; i < inputRefs.current.length; i++) {
-      // inputRefs.current[i].innerHTML = inputRefs.current[i].innerHTML.replace(
-      //   /\&nbsp;/g,
-      //   ""
-      // );
       let data = inputRefs.current[i].innerText;
       query += data;
     }
@@ -244,6 +236,8 @@ export default function Editor() {
     inputRefs.current[currentRef].innerHTML = changeColor(
       item.target.innerText
     );
+    inputRefs.current[currentRef].focus();
+    updateCursorPosition(inputRefs.current[currentRef]);
   };
 
   return (
@@ -341,10 +335,12 @@ export default function Editor() {
                     ref={(ref) => (inputRefs.current[index] = ref)}
                     onInput={(event) => updateSuggesstions(event, index)}
                     spellCheck={false}
-                    onMouseMoveCapture={() =>
-                      setTextSelection(window.getSelection().toString())
-                    }
-                    onMouseUp={() => setTextSelection("")}
+                    onMouseMoveCapture={() => {
+                      setTextSelection(window.getSelection().toString());
+                    }}
+                    onMouseUp={() => {
+                      setTextSelection("");
+                    }}
                   />
 
                   <SuggesstionBox id="show-on-focus">

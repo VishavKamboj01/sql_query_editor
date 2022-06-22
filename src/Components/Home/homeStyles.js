@@ -4,8 +4,7 @@ export const BaseContainer = styled.div`
   width: 100vw;
   height: 100vh;
   background-color: white;
-  overflow-x: hidden;
-  overflow-y: hidden;
+  overflow: hidden;
 `;
 
 export const TopBarContainer = styled.div`
