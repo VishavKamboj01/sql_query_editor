@@ -1,70 +1,26 @@
-# Getting Started with Create React App
+# SQL Compiler (Front-End)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Overview...
+-> This is basically a front-end application and does not include any backend services.<br>
+-> A user can enter a query and get the predefined output in form of a table.<br>
+-> Just like any other sql compiler, but it is not in sync with the query.<br>
+-> The layout is created simpler only adding the most needed features for writing queries faster.<br>
+-> The UI is clean and consise so that the users can focus on thier work. Rather than useless features.<br>
 
-## Available Scripts
 
-In the project directory, you can run:
+# Libraris used
+-> This is a single page application created with the help of React.js (Javascript Library).<br>
+-> Basic Bootstrap components have been used like dropdowns etc.<br>
+-> Google fonts are used for the overall font family.<br>
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+# Key Features
+-> Auto Completion: I have implemented auto completion with the help of Trie (Prefix Tree) Data structure
+    to help the users in typing the quries faster.<br>
+-> Keyword Coloring: The Keywords are colored with a different color to differentiate them from the other code.<br>
+-> CSV File downloading: Users can download a csv file of the data they filtered using sql queries.<br>
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+# Page Load Time
+The page load time is 1.7s on mobile devices and 1.2s on desktop or laptop devices.<br>
+-> I have measured the page load time on Browser stack speed lab website.<br>
