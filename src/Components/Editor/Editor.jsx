@@ -55,6 +55,7 @@ export default function Editor() {
     let code = event.currentTarget.innerText;
     let tempCode = code;
     const key = event.key;
+    let cursorPos = cursorPosition();
 
     if (textSelection !== "") {
       event.currentTarget.innerHTML = "";
@@ -93,6 +94,7 @@ export default function Editor() {
         setCurrentRef(index - 1);
       }
     } else if (key === "Tab") {
+      cursorPos = cursorPosition();
       event.preventDefault();
       const words = code.split(" ");
 
@@ -101,7 +103,7 @@ export default function Editor() {
         const lastIndex = code.lastIndexOf(words[words.length - 1]);
 
         code = code.substring(0, lastIndex) + suggesstions[0];
-      }
+      } else return;
       event.currentTarget.innerText = code;
 
       setSuggesstions([]);
@@ -115,15 +117,13 @@ export default function Editor() {
       key !== "ArrowLeft"
     ) {
       //Handling space issue
-      let position = cursorPosition();
-      tempCode = tempCode.trim();
 
-      if (position + 2 < tempCode.length) {
-        return;
-      }
+      cursorPos++;
+      if (cursorPos < tempCode.length) return;
 
       event.currentTarget.innerHTML = changeColor(code);
       updateCursorPosition(event.currentTarget);
+      setSuggesstions([]);
     }
   };
 
@@ -131,7 +131,7 @@ export default function Editor() {
     const sel = document.getSelection();
     sel.modify("extend", "backward", "paragraphboundary");
     const pos = sel.toString().length;
-    if (sel.anchorNode != undefined) sel.collapseToEnd();
+    if (sel.anchorNode !== undefined) sel.collapseToEnd();
     return pos;
   };
 
