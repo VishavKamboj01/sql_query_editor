@@ -243,7 +243,7 @@ export default function Editor() {
   return (
     <EditorContainer>
       <TopBarContainer>
-        <AtlanLogo src={logo} />
+        {/* <AtlanLogo src={logo} /> */}
         SQL COMPILER
         <ButtonsContainer>
           <Button onClick={handleRunClicked} style={{ background: "#14C38E" }}>
